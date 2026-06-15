@@ -1,4 +1,4 @@
-var API = "http://127.0.0.1:5000";
+var API = "https://overload-enjoyable-example.ngrok-free.dev";
 var sessionId = buatSessionId();
 var isLoading = false;
 var sidebarOpen = true;
