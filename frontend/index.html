@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ngrok-skip-browser-warning" content="true">
+    <title>YAYA AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        
+        <!-- Sidebar Header: Logo + Nama + Toggle -->
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <img src="logo.png" alt="Logo" class="sidebar-logo" onerror="this.outerHTML='<div class=sidebar-logo-fallback>Y</div>'" />
+                <span class="sidebar-brand-name">YAYA AI</span>
+            </div>
+            <button class="toggle-btn" onclick="toggleSidebar()" title="Tutup Sidebar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- New Chat Button -->
+        <div class="sidebar-newchat">
+            <button class="new-chat-btn" onclick="newChat()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Chat Baru
+            </button>
+        </div>
+
+        <!-- History -->
+        <div class="sidebar-history" id="sidebar-sessions"></div>
+
+        <!-- Bottom -->
+        <div class="sidebar-bottom">
+            <div class="upload-section">
+                <input type="file" id="file-input" accept=".txt,.pdf,.md,.py,.js,.json,.csv,.xlsx" style="display:none" />
+                <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    Upload File
+                </button>
+                <p id="upload-status" class="upload-status"></p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main -->
+    <main class="main">
+        <header class="topbar">
+            <button class="menu-btn" id="menu-btn" onclick="toggleSidebar()" title="Buka Sidebar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+            </button>
+            <span class="topbar-title" id="chat-title">YAYA AI</span>
+            <div class="topbar-actions">
+                <button class="icon-btn" onclick="hapusChat()" title="Hapus Chat">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="chat-container" id="chat-messages">
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-logo">
+                    <img src="logo.png" alt="YAYA AI" class="welcome-logo-img" onerror="this.outerHTML='<div class=welcome-logo-fallback>Y</div>'" />
+                </div>
+                <h1 class="welcome-title">YAYA AI</h1>
+                <p class="welcome-subtitle">Asisten AI pribadi yang cerdas dan powerful</p>
+                <div class="welcome-grid">
+                    <div class="welcome-card" onclick="isiPesan('Jelaskan tentang kecerdasan buatan')"><div class="welcome-card-icon">💡</div><p>Jelaskan tentang kecerdasan buatan</p></div>
+                    <div class="welcome-card" onclick="isiPesan('Buatkan kode Python web scraper')"><div class="welcome-card-icon">💻</div><p>Buatkan kode Python web scraper</p></div>
+                    <div class="welcome-card" onclick="isiPesan('Bagaimana cuaca di Jakarta?')"><div class="welcome-card-icon">🌤️</div><p>Bagaimana cuaca di Jakarta?</p></div>
+                    <div class="welcome-card" onclick="isiPesan('Cari berita terbaru tentang AI')"><div class="welcome-card-icon">🔍</div><p>Cari berita terbaru tentang AI</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-wrapper">
+           <div class="input-container">
+    <input type="file" id="file-input-chat" accept=".txt,.pdf,.md,.py,.js,.json,.csv,.xlsx" style="display:none" />
+    <button class="attach-btn" onclick="document.getElementById('file-input-chat').click()" title="Upload File">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+        </svg>
+    </button>
+    <textarea id="user-input" placeholder="Kirim pesan ke YAYA AI..." rows="1" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+    <button id="btn-send" onclick="kirimPesan()" class="send-btn" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+    </button>
+</div>
+            <p class="disclaimer">YAYA AI berjalan 100% lokal di komputermu</p>
+        </div>
+    </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
